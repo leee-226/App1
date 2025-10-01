@@ -280,3 +280,208 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>School Login / Main</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- important for mobile! -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+    header, footer {
+      background: #005fa3;
+      color: white;
+      text-align: center;
+      padding: 16px 8px;
+    }
+    main {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 16px;
+      background: #fff;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 1.7em;
+      margin-bottom: 0.3em;
+    }
+    .role-btn, .menu-btn, button, input[type="submit"] {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 16px;
+      font-size: 1.15em;
+      border-radius: 7px;
+      border: none;
+      background: #0074d9;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .role-btn:hover, .menu-btn:hover, button:hover, input[type="submit"]:hover {
+      background: #003d66;
+    }
+    input[type="text"], input[type="password"], textarea {
+      width: 100%;
+      font-size: 1.1em;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    form {
+      margin: 24px 0 8px 0;
+      background: #f7fbff;
+      padding: 18px 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px #dae2e8;
+    }
+    .hidden { display: none; }
+    .msg { color: green; margin-top: 10px; }
+    .err { color: red; margin-top: 10px; }
+    .menu { margin: 0 0 24px 0; }
+    .section { margin-top: 22px; background: #f9f9fd; padding: 14px; border-radius: 10px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 7px 5px;
+      font-size: 1em;
+      text-align: center;
+    }
+    ul { padding-left: 20px; }
+    @media (max-width: 600px) {
+      main {
+        padding: 8px;
+        min-width: unset;
+      }
+      h1 { font-size: 1.2em; }
+      .section, form {
+        padding: 10px 5px;
+      }
+      .role-btn, .menu-btn, button, input[type="submit"] {
+        font-size: 1em;
+        padding: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>School Website</h1>
+  </header>
+  <main>
+    <!-- Login Forms -->
+    <div id="loginSection">
+      <h2 style="text-align:center;font-size:1.3em;">Choose Role</h2>
+      <button class="role-btn" onclick="showForm('admin')">Administrator</button>
+      <button class="role-btn" onclick="showForm('teacher')">Teacher</button>
+      <button class="role-btn" onclick="showForm('student')">Student</button>
+
+      <!-- Admin Form -->
+      <form id="adminForm" class="hidden" onsubmit="return adminLogin(event)">
+        <h3>Admin Login</h3>
+        <label>Admin Name:<input type="text" id="adminName" required autocomplete="username"></label>
+        <label>Password:<input type="password" id="adminPass" required autocomplete="current-password"></label>
+        <input type="submit" value="Login">
+        <div id="adminMsg"></div>
+      </form>
+
+      <!-- Teacher Form -->
+      <form id="teacherForm" class="hidden" onsubmit="return teacherLogin(event)">
+        <h3>Teacher Login / Sign Up</h3>
+        <label>Name:<input type="text" id="teacherName" required autocomplete="username"></label>
+        <label>Subject:<input type="text" id="teacherSubject" required></label>
+        <label>Password:<input type="password" id="teacherPass" required autocomplete="new-password"></label>
+        <input type="submit" value="Login / Sign Up">
+        <div id="teacherMsg"></div>
+      </form>
+
+      <!-- Student Form -->
+      <form id="studentForm" class="hidden" onsubmit="return studentLogin(event)">
+        <h3>Student Login</h3>
+        <label>Name:<input type="text" id="studentName" required></label>
+        <label>Class:<input type="text" id="studentClass" required></label>
+        <label>Number:<input type="text" id="studentNumber" required></label>
+        <label>Barcode Number:<input type="text" id="studentBarcode" required></label>
+        <input type="submit" value="Login">
+        <div id="studentMsg"></div>
+      </form>
+    </div>
+
+    <!-- Main Menu (hidden until login) -->
+    <div id="mainMenu" class="hidden menu">
+      <button class="menu-btn" onclick="showSection('board')">Free Bulletin Board</button>
+      <button class="menu-btn" onclick="showSection('timetable')">Timetable</button>
+      <button class="menu-btn" onclick="showSection('market')">Secondhand Market</button>
+      <button class="menu-btn" onclick="showSection('lunch')">Lunch Menu</button>
+      <button class="menu-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Sections -->
+    <div id="boardSection" class="hidden section">
+      <h2>Free Bulletin Board</h2>
+      <form onsubmit="return postBulletin(event)">
+        <textarea id="bulletinText" placeholder="Write your message here..."></textarea>
+        <input type="submit" value="Post">
+      </form>
+      <ul id="bulletinBoard"></ul>
+    </div>
+
+    <div id="timetableSection" class="hidden section">
+      <h2>Timetable</h2>
+      <table>
+        <tr><th>Period</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr>
+        <tr><td>1</td><td>Math</td><td>English</td><td>Science</td><td>History</td><td>PE</td></tr>
+        <tr><td>2</td><td>Science</td><td>Math</td><td>English</td><td>Art</td><td>Music</td></tr>
+      </table>
+    </div>
+
+    <div id="marketSection" class="hidden section">
+      <h2>Secondhand Trading Market</h2>
+      <form onsubmit="return postMarket(event)">
+        <input id="marketItem" placeholder="Item name" required>
+        <input id="marketDesc" placeholder="Description" required>
+        <input type="submit" value="Post">
+      </form>
+      <ul id="marketBoard"></ul>
+    </div>
+
+    <div id="lunchSection" class="hidden section">
+      <h2>Lunch Menu</h2>
+      <ul>
+        <li>Monday: Rice, Chicken, Salad</li>
+        <li>Tuesday: Noodles, Beef, Kimchi</li>
+        <li>Wednesday: Soup, Fish, Vegetables</li>
+        <li>Thursday: Fried Rice, Pork, Fruit</li>
+        <li>Friday: Curry, Egg, Yogurt</li>
+      </ul>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Our School. All rights reserved.</p>
+  </footer>
+  <script>
+    // UI show/hide for login forms
+    function showForm(role) {
+      document.getElementById('adminForm').classList.add('hidden');
+      document.getElementById('teacherForm').classList.add('hidden');
+      document.getElementById('studentForm').classList.add('hidden');
+      if (role === 'admin') document.getElementById('adminForm').classList.remove('hidden');
+      if (role === 'teacher
