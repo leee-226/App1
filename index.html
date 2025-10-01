@@ -487,7 +487,7 @@
       if (role === 'teacher
           <!DOCTYPE html>
 <html lang="en">
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -503,25 +503,25 @@
     header {
       background: #f4978e;
       color: #fff;
-      padding: 30px 0 18px 0;
+      padding: 36px 0 20px 0;
       text-align: center;
       border-bottom-left-radius: 45px;
       border-bottom-right-radius: 45px;
       box-shadow: 0 4px 12px #f8bbd0a0;
     }
     .school-name {
-      font-size: 2em;
+      font-size: 2.1em;
       font-weight: bold;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       margin: 0 0 8px 0;
       color: #fff7f0;
       text-shadow: 1px 2px 5px #f4978e80;
-      font-family: 'Segoe UI', 'Arial', '맑은 고딕', 'Malgun Gothic', sans-serif;
+      line-height: 1.2;
     }
     h1 {
-      font-size: 1.2em;
+      font-size: 1.15em;
       font-weight: 400;
-      margin: 0 0 10px 0;
+      margin: 0 0 12px 0;
       color: #fff;
       letter-spacing: 1px;
     }
@@ -588,4 +588,309 @@
     .hidden { display: none; }
     .msg { color: #a2c98a; margin-top: 10px; font-weight: 500;}
     .err { color: #e76f51; margin-top: 10px; font-weight: 500;}
-    .menu { margin: 
+    .menu { margin: 0 0 24px 0; }
+    .section {
+      margin-top: 22px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 14px;
+      box-shadow: 0 1px 4px #f8bbd060;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fde2e4;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #f4978e50;
+      padding: 7px 5px;
+      font-size: 1em;
+      text-align: center;
+    }
+    th { background: #f9c5b5; color: #fff; }
+    ul { padding-left: 20px; }
+    @media (max-width: 600px) {
+      main {
+        padding: 7px;
+      }
+      .section, form {
+        padding: 9px 5px;
+      }
+      .role-btn, .menu-btn, button, input[type="submit"] {
+        font-size: 1em;
+        padding: 12px;
+      }
+      .school-name { font-size: 1.3em; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="school-name">성주여자고등학교</div>
+    <h1>Welcome!</h1>
+  </header>
+  <main>
+    <!-- Login Forms -->
+    <div id="loginSection">
+      <h2>로그인할 대상을 선택하세요</h2>
+      <button class="role-btn" onclick="showForm('admin')">관리자</button>
+      <button class="role-btn" onclick="showForm('teacher')">선생님</button>
+      <button class="role-btn" onclick="showForm('student')">학생</button>
+
+      <!-- Admin Form -->
+      <form id="adminForm" class="hidden" onsubmit="return adminLogin(event)">
+        <h3 style="color:#f4978e;">관리자 로그인</h3>
+        <label>이름:<input type="text" id="adminName" required autocomplete="username"></label>
+        <label>비밀번호:<input type="password" id="adminPass" required autocomplete="current-password"></label>
+        <input type="submit" value="로그인">
+        <div id="adminMsg"></div>
+      </form>
+
+      <!-- Teacher Form -->
+      <form id="teacherForm" class="hidden" onsubmit="return teacherLogin(event)">
+        <h3 style="color:#f4978e;">선생님 로그인 / 회원가입</h3>
+        <label>이름:<input type="text" id="teacherName" required autocomplete="username"></label>
+        <label>과목:<input type="text" id="teacherSubject" required></label>
+        <label>비밀번호:<input type="password" id="teacherPass" required autocomplete="new-password"></label>
+        <input type="submit" value="로그인 / 가입">
+        <div id="teacherMsg"></div>
+      </form>
+
+      <!-- Student Form -->
+      <form id="studentForm" class="hidden" onsubmit="return studentLogin(event)">
+        <h3 style="color:#f4978e;">학생 로그인</h3>
+        <label>이름:<input type="text" id="studentName" required></label>
+        <label>반:<input type="text" id="studentClass" required></label>
+        <label>번호:<input type="text" id="studentNumber" required></label>
+        <label>바코드 번호:<input type="text" id="studentBarcode" required></label>
+        <input type="submit" value="로그인">
+        <div id="studentMsg"></div>
+      </form>
+    </div>
+
+    <!-- Main Menu (hidden until login) -->
+    <div id="mainMenu" class="hidden menu">
+      <button class="menu-btn" onclick="showSection('board')">자유 게시판</button>
+      <button class="menu-btn" onclick="showSection('timetable')">시간표</button>
+      <button class="menu-btn" onclick="showSection('market')">중고거래 장터</button>
+      <button class="menu-btn" onclick="showSection('lunch')">급식 메뉴</button>
+      <button class="menu-btn" onclick="logout()">로그아웃</button>
+    </div>
+
+    <!-- Sections -->
+    <div id="boardSection" class="hidden section">
+      <h2>자유 게시판</h2>
+      <form onsubmit="return postBulletin(event)">
+        <textarea id="bulletinText" placeholder="게시글을 작성하세요..."></textarea>
+        <input type="submit" value="게시">
+      </form>
+      <ul id="bulletinBoard"></ul>
+    </div>
+
+    <div id="timetableSection" class="hidden section">
+      <h2>시간표</h2>
+      <table>
+        <tr><th>교시</th><th>월요일</th><th>화요일</th><th>수요일</th><th>목요일</th><th>금요일</th></tr>
+        <tr><td>1</td><td>수학</td><td>영어</td><td>과학</td><td>역사</td><td>체육</td></tr>
+        <tr><td>2</td><td>과학</td><td>수학</td><td>영어</td><td>미술</td><td>음악</td></tr>
+      </table>
+    </div>
+
+    <div id="marketSection" class="hidden section">
+      <h2>중고거래 장터</h2>
+      <form onsubmit="return postMarket(event)">
+        <input id="marketItem" placeholder="물품명" required>
+        <input id="marketDesc" placeholder="설명" required>
+        <input type="submit" value="등록">
+      </form>
+      <ul id="marketBoard"></ul>
+    </div>
+
+    <div id="lunchSection" class="hidden section">
+      <h2>급식 메뉴</h2>
+      <ul>
+        <li>월요일: 밥, 치킨, 샐러드</li>
+        <li>화요일: 국수, 소고기, 김치</li>
+        <li>수요일: 국, 생선, 야채</li>
+        <li>목요일: 볶음밥, 돼지고기, 과일</li>
+        <li>금요일: 카레, 계란, 요거트</li>
+      </ul>
+    </div>
+  </main>
+  <footer>
+    <p style="color:#f4978e;">&copy; 2025 성주여자고등학교. All rights reserved.</p>
+  </footer>
+  <script>
+    // UI show/hide for login forms
+    function showForm(role) {
+      document.getElementById('adminForm').classList.add('hidden');
+      document.getElementById('teacherForm').classList.add('hidden');
+      document.getElementById('studentForm').classList.add('hidden');
+      if (role === 'admin') document.getElementById('adminForm').classList.remove('hidden');
+      if (role === 'teacher') document.getElementById('teacherForm').classList.remove('hidden');
+      if (role === 'student') document.getElementById('studentForm').classList.remove('hidden');
+    }
+
+    // Hide all sections
+    function hideAllSections() {
+      document.getElementById('boardSection').classList.add('hidden');
+      document.getElementById('timetableSection').classList.add('hidden');
+      document.getElementById('marketSection').classList.add('hidden');
+      document.getElementById('lunchSection').classList.add('hidden');
+    }
+
+    // Show selected section
+    function showSection(section) {
+      hideAllSections();
+      if (section === 'board') document.getElementById('boardSection').classList.remove('hidden');
+      if (section === 'timetable') document.getElementById('timetableSection').classList.remove('hidden');
+      if (section === 'market') document.getElementById('marketSection').classList.remove('hidden');
+      if (section === 'lunch') document.getElementById('lunchSection').classList.remove('hidden');
+    }
+
+    // After login success, show menu
+    function afterLogin() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('mainMenu').classList.remove('hidden');
+      hideAllSections();
+    }
+
+    // Logout function
+    function logout() {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('mainMenu').classList.add('hidden');
+      hideAllSections();
+      // Reset forms
+      document.getElementById('adminForm').reset();
+      document.getElementById('teacherForm').reset();
+      document.getElementById('studentForm').reset();
+      // Clear messages
+      document.getElementById('adminMsg').textContent = '';
+      document.getElementById('teacherMsg').textContent = '';
+      document.getElementById('studentMsg').textContent = '';
+    }
+
+    // Login logic (same as before)
+    function adminLogin(event) {
+      event.preventDefault();
+      const pass = document.getElementById('adminPass').value;
+      const msg = document.getElementById('adminMsg');
+      if (pass === '21**') {
+        msg.textContent = '관리자 로그인 성공!';
+        msg.className = 'msg';
+        setTimeout(afterLogin, 500);
+      } else {
+        msg.textContent = '비밀번호가 틀렸습니다!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+
+    function teacherLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('teacherName').value;
+      const subject = document.getElementById('teacherSubject').value;
+      const pass = document.getElementById('teacherPass').value;
+      const msg = document.getElementById('teacherMsg');
+      const key = 'teacher_' + name + '_' + subject;
+      let savedPass = localStorage.getItem(key);
+      if (!savedPass) {
+        // First time: set new password
+        localStorage.setItem(key, pass);
+        msg.textContent = '비밀번호가 설정되었습니다! 선생님 가입 및 로그인 완료.';
+        msg.className = 'msg';
+        setTimeout(afterLogin, 500);
+      } else if (savedPass === pass) {
+        msg.textContent = '선생님 로그인 성공!';
+        msg.className = 'msg';
+        setTimeout(afterLogin, 500);
+      } else {
+        msg.textContent = '비밀번호가 틀렸습니다!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+
+    function studentLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('studentName').value;
+      const className = document.getElementById('studentClass').value;
+      const number = document.getElementById('studentNumber').value;
+      const barcode = document.getElementById('studentBarcode').value;
+      const msg = document.getElementById('studentMsg');
+      if (name && className && number && barcode) {
+        msg.textContent = `환영합니다, ${className}반 ${number}번 ${name} 학생!`;
+        msg.className = 'msg';
+        setTimeout(afterLogin, 500);
+      } else {
+        msg.textContent = '모든 항목을 입력하세요!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+
+    // Free Bulletin Board (localStorage)
+    function loadBulletin() {
+      const board = document.getElementById('bulletinBoard');
+      board.innerHTML = '';
+      const posts = JSON.parse(localStorage.getItem('bulletinPosts') || '[]');
+      posts.forEach((post, i) => {
+        const li = document.createElement('li');
+        li.textContent = post;
+        board.appendChild(li);
+      });
+    }
+    function postBulletin(event) {
+      event.preventDefault();
+      const txt = document.getElementById('bulletinText').value.trim();
+      if (txt) {
+        let posts = JSON.parse(localStorage.getItem('bulletinPosts') || '[]');
+        posts.push(txt);
+        localStorage.setItem('bulletinPosts', JSON.stringify(posts));
+        document.getElementById('bulletinText').value = '';
+        loadBulletin();
+      }
+      return false;
+    }
+
+    // Secondhand Market (localStorage)
+    function loadMarket() {
+      const board = document.getElementById('marketBoard');
+      board.innerHTML = '';
+      const items = JSON.parse(localStorage.getItem('marketItems') || '[]');
+      items.forEach((item, i) => {
+        const li = document.createElement('li');
+        li.textContent = item.name + ': ' + item.desc;
+        board.appendChild(li);
+      });
+    }
+    function postMarket(event) {
+      event.preventDefault();
+      const name = document.getElementById('marketItem').value.trim();
+      const desc = document.getElementById('marketDesc').value.trim();
+      if (name && desc) {
+        let items = JSON.parse(localStorage.getItem('marketItems') || '[]');
+        items.push({name, desc});
+        localStorage.setItem('marketItems', JSON.stringify(items));
+        document.getElementById('marketItem').value = '';
+        document.getElementById('marketDesc').value = '';
+        loadMarket();
+      }
+      return false;
+    }
+
+    // Load board/market posts when sections shown
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (this.textContent.includes('게시판')) loadBulletin();
+          if (this.textContent.includes('장터')) loadMarket();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
