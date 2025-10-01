@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>School Login / Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .hidden { display: none; }
+    .role-btn { margin: 0 10px; padding: 10px 20px; }
+    form { margin-top: 20px; }
+    .msg { color: green; margin-top: 10px; }
+    .err { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>School Login / Sign Up</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="news.html">News</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="contact.html">Contact</a>
+      <a href="login.html">Login/Sign Up</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Choose Role</h2>
+    <button class="role-btn" onclick="showForm('admin')">Administrator</button>
+    <button class="role-btn" onclick="showForm('teacher')">Teacher</button>
+    <button class="role-btn" onclick="showForm('student')">Student</button>
+
+    <!-- Admin Form -->
+    <form id="adminForm" class="hidden" onsubmit="return adminLogin(event)">
+      <h3>Admin Login</h3>
+      <label>Admin Name: <input type="text" id="adminName" required></label><br><br>
+      <label>Password: <input type="password" id="adminPass" required></label><br><br>
+      <button type="submit">Login</button>
+      <div id="adminMsg"></div>
+    </form>
+
+    <!-- Teacher Form -->
+    <form id="teacherForm" class="hidden" onsubmit="return teacherLogin(event)">
+      <h3>Teacher Login / Sign Up</h3>
+      <label>Name: <input type="text" id="teacherName" required></label><br><br>
+      <label>Subject: <input type="text" id="teacherSubject" required></label><br><br>
+      <label>Password: <input type="password" id="teacherPass" required></label><br><br>
+      <button type="submit">Login / Sign Up</button>
+      <div id="teacherMsg"></div>
+    </form>
+
+    <!-- Student Form -->
+    <form id="studentForm" class="hidden" onsubmit="return studentLogin(event)">
+      <h3>Student Login</h3>
+      <label>Name: <input type="text" id="studentName" required></label><br><br>
+      <label>Class: <input type="text" id="studentClass" required></label><br><br>
+      <label>Number: <input type="text" id="studentNumber" required></label><br><br>
+      <label>Barcode Number: <input type="text" id="studentBarcode" required></label><br><br>
+      <button type="submit">Login</button>
+      <div id="studentMsg"></div>
+    </form>
+  </main>
+  <footer>
+    <p>&copy; 2025 Our School. All rights reserved.</p>
+  </footer>
+  <script>
+    function showForm(role) {
+      document.getElementById('adminForm').classList.add('hidden');
+      document.getElementById('teacherForm').classList.add('hidden');
+      document.getElementById('studentForm').classList.add('hidden');
+      if (role === 'admin') document.getElementById('adminForm').classList.remove('hidden');
+      if (role === 'teacher') document.getElementById('teacherForm').classList.remove('hidden');
+      if (role === 'student') document.getElementById('studentForm').classList.remove('hidden');
+    }
+
+    function adminLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('adminName').value;
+      const pass = document.getElementById('adminPass').value;
+      const msg = document.getElementById('adminMsg');
+      if (pass === '21**') {
+        msg.textContent = 'Admin login successful!';
+        msg.className = 'msg';
+      } else {
+        msg.textContent = 'Incorrect password!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+
+    function teacherLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('teacherName').value;
+      const subject = document.getElementById('teacherSubject').value;
+      const pass = document.getElementById('teacherPass').value;
+      const msg = document.getElementById('teacherMsg');
+      const key = 'teacher_' + name + '_' + subject;
+      let savedPass = localStorage.getItem(key);
+      if (!savedPass) {
+        // First time: set new password
+        localStorage.setItem(key, pass);
+        msg.textContent = 'Password set! Teacher signed up and logged in.';
+        msg.className = 'msg';
+      } else if (savedPass === pass) {
+        msg.textContent = 'Teacher login successful!';
+        msg.className = 'msg';
+      } else {
+        msg.textContent = 'Incorrect password!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+
+    function studentLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById('studentName').value;
+      const className = document.getElementById('studentClass').value;
+      const number = document.getElementById('studentNumber').value;
+      const barcode = document.getElementById('studentBarcode').value;
+      const msg = document.getElementById('studentMsg');
+      if (name && className && number && barcode) {
+        msg.textContent = `Welcome, ${name} from Class ${className}!`;
+        msg.className = 'msg';
+      } else {
+        msg.textContent = 'Please fill in all fields!';
+        msg.className = 'err';
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
