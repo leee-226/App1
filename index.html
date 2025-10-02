@@ -1,493 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>School Login / Main</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .hidden { display: none; }
-    .role-btn, .menu-btn { margin: 0 10px; padding: 10px 20px; }
-    form { margin-top: 20px; }
-    .msg { color: green; margin-top: 10px; }
-    .err { color: red; margin-top: 10px; }
-    .menu { margin-top: 30px; }
-    .section { margin-top: 30px; background: #fff; padding: 20px; border-radius: 10px; }
-    textarea { width: 95%; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>School Website</h1>
-  </header>
-  <main>
-    <!-- Login Forms (same as before) -->
-    <div id="loginSection">
-      <h2>Choose Role</h2>
-      <button class="role-btn" onclick="showForm('admin')">Administrator</button>
-      <button class="role-btn" onclick="showForm('teacher')">Teacher</button>
-      <button class="role-btn" onclick="showForm('student')">Student</button>
-
-      <!-- Admin Form -->
-      <form id="adminForm" class="hidden" onsubmit="return adminLogin(event)">
-        <h3>Admin Login</h3>
-        <label>Admin Name: <input type="text" id="adminName" required></label><br><br>
-        <label>Password: <input type="password" id="adminPass" required></label><br><br>
-        <button type="submit">Login</button>
-        <div id="adminMsg"></div>
-      </form>
-
-      <!-- Teacher Form -->
-      <form id="teacherForm" class="hidden" onsubmit="return teacherLogin(event)">
-        <h3>Teacher Login / Sign Up</h3>
-        <label>Name: <input type="text" id="teacherName" required></label><br><br>
-        <label>Subject: <input type="text" id="teacherSubject" required></label><br><br>
-        <label>Password: <input type="password" id="teacherPass" required></label><br><br>
-        <button type="submit">Login / Sign Up</button>
-        <div id="teacherMsg"></div>
-      </form>
-
-      <!-- Student Form -->
-      <form id="studentForm" class="hidden" onsubmit="return studentLogin(event)">
-        <h3>Student Login</h3>
-        <label>Name: <input type="text" id="studentName" required></label><br><br>
-        <label>Class: <input type="text" id="studentClass" required></label><br><br>
-        <label>Number: <input type="text" id="studentNumber" required></label><br><br>
-        <label>Barcode Number: <input type="text" id="studentBarcode" required></label><br><br>
-        <button type="submit">Login</button>
-        <div id="studentMsg"></div>
-      </form>
-    </div>
-
-    <!-- Main Menu (hidden until login) -->
-    <div id="mainMenu" class="hidden menu">
-      <button class="menu-btn" onclick="showSection('board')">Free Bulletin Board</button>
-      <button class="menu-btn" onclick="showSection('timetable')">Timetable</button>
-      <button class="menu-btn" onclick="showSection('market')">Secondhand Market</button>
-      <button class="menu-btn" onclick="showSection('lunch')">Lunch Menu</button>
-      <button class="menu-btn" onclick="logout()">Logout</button>
-    </div>
-
-    <!-- Sections -->
-    <div id="boardSection" class="hidden section">
-      <h2>Free Bulletin Board</h2>
-      <form onsubmit="return postBulletin(event)">
-        <textarea id="bulletinText" rows="3" placeholder="Write your message here..."></textarea><br>
-        <button type="submit">Post</button>
-      </form>
-      <ul id="bulletinBoard"></ul>
-    </div>
-
-    <div id="timetableSection" class="hidden section">
-      <h2>Timetable</h2>
-      <table border="1" cellpadding="5">
-        <tr><th>Period</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr>
-        <tr><td>1</td><td>Math</td><td>English</td><td>Science</td><td>History</td><td>PE</td></tr>
-        <tr><td>2</td><td>Science</td><td>Math</td><td>English</td><td>Art</td><td>Music</td></tr>
-        <!-- Add more rows as needed -->
-      </table>
-    </div>
-
-    <div id="marketSection" class="hidden section">
-      <h2>Secondhand Trading Market</h2>
-      <form onsubmit="return postMarket(event)">
-        <input id="marketItem" placeholder="Item name" required>
-        <input id="marketDesc" placeholder="Description" required>
-        <button type="submit">Post</button>
-      </form>
-      <ul id="marketBoard"></ul>
-    </div>
-
-    <div id="lunchSection" class="hidden section">
-      <h2>Lunch Menu</h2>
-      <ul>
-        <li>Monday: Rice, Chicken, Salad</li>
-        <li>Tuesday: Noodles, Beef, Kimchi</li>
-        <li>Wednesday: Soup, Fish, Vegetables</li>
-        <li>Thursday: Fried Rice, Pork, Fruit</li>
-        <li>Friday: Curry, Egg, Yogurt</li>
-      </ul>
-    </div>
-  </main>
-  <footer>
-    <p>&copy; 2025 Our School. All rights reserved.</p>
-  </footer>
-  <script>
-    // UI show/hide for login forms
-    function showForm(role) {
-      document.getElementById('adminForm').classList.add('hidden');
-      document.getElementById('teacherForm').classList.add('hidden');
-      document.getElementById('studentForm').classList.add('hidden');
-      if (role === 'admin') document.getElementById('adminForm').classList.remove('hidden');
-      if (role === 'teacher') document.getElementById('teacherForm').classList.remove('hidden');
-      if (role === 'student') document.getElementById('studentForm').classList.remove('hidden');
-    }
-
-    // Hide all sections
-    function hideAllSections() {
-      document.getElementById('boardSection').classList.add('hidden');
-      document.getElementById('timetableSection').classList.add('hidden');
-      document.getElementById('marketSection').classList.add('hidden');
-      document.getElementById('lunchSection').classList.add('hidden');
-    }
-
-    // Show selected section
-    function showSection(section) {
-      hideAllSections();
-      if (section === 'board') document.getElementById('boardSection').classList.remove('hidden');
-      if (section === 'timetable') document.getElementById('timetableSection').classList.remove('hidden');
-      if (section === 'market') document.getElementById('marketSection').classList.remove('hidden');
-      if (section === 'lunch') document.getElementById('lunchSection').classList.remove('hidden');
-    }
-
-    // After login success, show menu
-    function afterLogin() {
-      document.getElementById('loginSection').classList.add('hidden');
-      document.getElementById('mainMenu').classList.remove('hidden');
-      hideAllSections();
-    }
-
-    // Logout function
-    function logout() {
-      document.getElementById('loginSection').classList.remove('hidden');
-      document.getElementById('mainMenu').classList.add('hidden');
-      hideAllSections();
-      // Reset forms
-      document.getElementById('adminForm').reset();
-      document.getElementById('teacherForm').reset();
-      document.getElementById('studentForm').reset();
-      // Clear messages
-      document.getElementById('adminMsg').textContent = '';
-      document.getElementById('teacherMsg').textContent = '';
-      document.getElementById('studentMsg').textContent = '';
-    }
-
-    // Login logic (same as before)
-    function adminLogin(event) {
-      event.preventDefault();
-      const pass = document.getElementById('adminPass').value;
-      const msg = document.getElementById('adminMsg');
-      if (pass === '21**') {
-        msg.textContent = 'Admin login successful!';
-        msg.className = 'msg';
-        setTimeout(afterLogin, 500);
-      } else {
-        msg.textContent = 'Incorrect password!';
-        msg.className = 'err';
-      }
-      return false;
-    }
-
-    function teacherLogin(event) {
-      event.preventDefault();
-      const name = document.getElementById('teacherName').value;
-      const subject = document.getElementById('teacherSubject').value;
-      const pass = document.getElementById('teacherPass').value;
-      const msg = document.getElementById('teacherMsg');
-      const key = 'teacher_' + name + '_' + subject;
-      let savedPass = localStorage.getItem(key);
-      if (!savedPass) {
-        // First time: set new password
-        localStorage.setItem(key, pass);
-        msg.textContent = 'Password set! Teacher signed up and logged in.';
-        msg.className = 'msg';
-        setTimeout(afterLogin, 500);
-      } else if (savedPass === pass) {
-        msg.textContent = 'Teacher login successful!';
-        msg.className = 'msg';
-        setTimeout(afterLogin, 500);
-      } else {
-        msg.textContent = 'Incorrect password!';
-        msg.className = 'err';
-      }
-      return false;
-    }
-
-    function studentLogin(event) {
-      event.preventDefault();
-      const name = document.getElementById('studentName').value;
-      const className = document.getElementById('studentClass').value;
-      const number = document.getElementById('studentNumber').value;
-      const barcode = document.getElementById('studentBarcode').value;
-      const msg = document.getElementById('studentMsg');
-      if (name && className && number && barcode) {
-        msg.textContent = `Welcome, ${name} from Class ${className}!`;
-        msg.className = 'msg';
-        setTimeout(afterLogin, 500);
-      } else {
-        msg.textContent = 'Please fill in all fields!';
-        msg.className = 'err';
-      }
-      return false;
-    }
-
-    // Free Bulletin Board (localStorage)
-    function loadBulletin() {
-      const board = document.getElementById('bulletinBoard');
-      board.innerHTML = '';
-      const posts = JSON.parse(localStorage.getItem('bulletinPosts') || '[]');
-      posts.forEach((post, i) => {
-        const li = document.createElement('li');
-        li.textContent = post;
-        board.appendChild(li);
-      });
-    }
-    function postBulletin(event) {
-      event.preventDefault();
-      const txt = document.getElementById('bulletinText').value.trim();
-      if (txt) {
-        let posts = JSON.parse(localStorage.getItem('bulletinPosts') || '[]');
-        posts.push(txt);
-        localStorage.setItem('bulletinPosts', JSON.stringify(posts));
-        document.getElementById('bulletinText').value = '';
-        loadBulletin();
-      }
-      return false;
-    }
-
-    // Secondhand Market (localStorage)
-    function loadMarket() {
-      const board = document.getElementById('marketBoard');
-      board.innerHTML = '';
-      const items = JSON.parse(localStorage.getItem('marketItems') || '[]');
-      items.forEach((item, i) => {
-        const li = document.createElement('li');
-        li.textContent = item.name + ': ' + item.desc;
-        board.appendChild(li);
-      });
-    }
-    function postMarket(event) {
-      event.preventDefault();
-      const name = document.getElementById('marketItem').value.trim();
-      const desc = document.getElementById('marketDesc').value.trim();
-      if (name && desc) {
-        let items = JSON.parse(localStorage.getItem('marketItems') || '[]');
-        items.push({name, desc});
-        localStorage.setItem('marketItems', JSON.stringify(items));
-        document.getElementById('marketItem').value = '';
-        document.getElementById('marketDesc').value = '';
-        loadMarket();
-      }
-      return false;
-    }
-
-    // Load board/market posts when sections shown
-    document.querySelectorAll('.menu-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        if (this.textContent.includes('Bulletin')) loadBulletin();
-        if (this.textContent.includes('Market')) loadMarket();
-      });
-    });
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>School Login / Main</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- important for mobile! -->
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
-      margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background: #005fa3;
-      color: white;
-      text-align: center;
-      padding: 16px 8px;
-    }
-    main {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 16px;
-      background: #fff;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-    h1 {
-      font-size: 1.7em;
-      margin-bottom: 0.3em;
-    }
-    .role-btn, .menu-btn, button, input[type="submit"] {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 16px;
-      font-size: 1.15em;
-      border-radius: 7px;
-      border: none;
-      background: #0074d9;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .role-btn:hover, .menu-btn:hover, button:hover, input[type="submit"]:hover {
-      background: #003d66;
-    }
-    input[type="text"], input[type="password"], textarea {
-      width: 100%;
-      font-size: 1.1em;
-      margin: 8px 0;
-      padding: 12px;
-      border-radius: 4px;
-      border: 1px solid #aaa;
-      box-sizing: border-box;
-    }
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-    form {
-      margin: 24px 0 8px 0;
-      background: #f7fbff;
-      padding: 18px 12px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px #dae2e8;
-    }
-    .hidden { display: none; }
-    .msg { color: green; margin-top: 10px; }
-    .err { color: red; margin-top: 10px; }
-    .menu { margin: 0 0 24px 0; }
-    .section { margin-top: 22px; background: #f9f9fd; padding: 14px; border-radius: 10px; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 7px 5px;
-      font-size: 1em;
-      text-align: center;
-    }
-    ul { padding-left: 20px; }
-    @media (max-width: 600px) {
-      main {
-        padding: 8px;
-        min-width: unset;
-      }
-      h1 { font-size: 1.2em; }
-      .section, form {
-        padding: 10px 5px;
-      }
-      .role-btn, .menu-btn, button, input[type="submit"] {
-        font-size: 1em;
-        padding: 13px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>School Website</h1>
-  </header>
-  <main>
-    <!-- Login Forms -->
-    <div id="loginSection">
-      <h2 style="text-align:center;font-size:1.3em;">Choose Role</h2>
-      <button class="role-btn" onclick="showForm('admin')">Administrator</button>
-      <button class="role-btn" onclick="showForm('teacher')">Teacher</button>
-      <button class="role-btn" onclick="showForm('student')">Student</button>
-
-      <!-- Admin Form -->
-      <form id="adminForm" class="hidden" onsubmit="return adminLogin(event)">
-        <h3>Admin Login</h3>
-        <label>Admin Name:<input type="text" id="adminName" required autocomplete="username"></label>
-        <label>Password:<input type="password" id="adminPass" required autocomplete="current-password"></label>
-        <input type="submit" value="Login">
-        <div id="adminMsg"></div>
-      </form>
-
-      <!-- Teacher Form -->
-      <form id="teacherForm" class="hidden" onsubmit="return teacherLogin(event)">
-        <h3>Teacher Login / Sign Up</h3>
-        <label>Name:<input type="text" id="teacherName" required autocomplete="username"></label>
-        <label>Subject:<input type="text" id="teacherSubject" required></label>
-        <label>Password:<input type="password" id="teacherPass" required autocomplete="new-password"></label>
-        <input type="submit" value="Login / Sign Up">
-        <div id="teacherMsg"></div>
-      </form>
-
-      <!-- Student Form -->
-      <form id="studentForm" class="hidden" onsubmit="return studentLogin(event)">
-        <h3>Student Login</h3>
-        <label>Name:<input type="text" id="studentName" required></label>
-        <label>Class:<input type="text" id="studentClass" required></label>
-        <label>Number:<input type="text" id="studentNumber" required></label>
-        <label>Barcode Number:<input type="text" id="studentBarcode" required></label>
-        <input type="submit" value="Login">
-        <div id="studentMsg"></div>
-      </form>
-    </div>
-
-    <!-- Main Menu (hidden until login) -->
-    <div id="mainMenu" class="hidden menu">
-      <button class="menu-btn" onclick="showSection('board')">Free Bulletin Board</button>
-      <button class="menu-btn" onclick="showSection('timetable')">Timetable</button>
-      <button class="menu-btn" onclick="showSection('market')">Secondhand Market</button>
-      <button class="menu-btn" onclick="showSection('lunch')">Lunch Menu</button>
-      <button class="menu-btn" onclick="logout()">Logout</button>
-    </div>
-
-    <!-- Sections -->
-    <div id="boardSection" class="hidden section">
-      <h2>Free Bulletin Board</h2>
-      <form onsubmit="return postBulletin(event)">
-        <textarea id="bulletinText" placeholder="Write your message here..."></textarea>
-        <input type="submit" value="Post">
-      </form>
-      <ul id="bulletinBoard"></ul>
-    </div>
-
-    <div id="timetableSection" class="hidden section">
-      <h2>Timetable</h2>
-      <table>
-        <tr><th>Period</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr>
-        <tr><td>1</td><td>Math</td><td>English</td><td>Science</td><td>History</td><td>PE</td></tr>
-        <tr><td>2</td><td>Science</td><td>Math</td><td>English</td><td>Art</td><td>Music</td></tr>
-      </table>
-    </div>
-
-    <div id="marketSection" class="hidden section">
-      <h2>Secondhand Trading Market</h2>
-      <form onsubmit="return postMarket(event)">
-        <input id="marketItem" placeholder="Item name" required>
-        <input id="marketDesc" placeholder="Description" required>
-        <input type="submit" value="Post">
-      </form>
-      <ul id="marketBoard"></ul>
-    </div>
-
-    <div id="lunchSection" class="hidden section">
-      <h2>Lunch Menu</h2>
-      <ul>
-        <li>Monday: Rice, Chicken, Salad</li>
-        <li>Tuesday: Noodles, Beef, Kimchi</li>
-        <li>Wednesday: Soup, Fish, Vegetables</li>
-        <li>Thursday: Fried Rice, Pork, Fruit</li>
-        <li>Friday: Curry, Egg, Yogurt</li>
-      </ul>
-    </div>
-  </main>
-  <footer>
-    <p>&copy; 2025 Our School. All rights reserved.</p>
-  </footer>
-  <script>
-    // UI show/hide for login forms
-    function showForm(role) {
-      document.getElementById('adminForm').classList.add('hidden');
-      document.getElementById('teacherForm').classList.add('hidden');
-      document.getElementById('studentForm').classList.add('hidden');
-      if (role === 'admin') document.getElementById('adminForm').classList.remove('hidden');
-      if (role === 'teacher
-          <!DOCTYPE html>
-<html lang="en">
-        <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -496,45 +7,45 @@
   <style>
     body {
       font-family: 'Segoe UI', 'Arial', sans-serif;
-      background: linear-gradient(120deg, #fde2e4 0%, #fff1e6 100%);
+      background: linear-gradient(120deg, #fff1e6 0%, #fde2e4 100%);
       margin: 0;
       padding: 0;
     }
     header {
       background: #f4978e;
       color: #fff;
-      padding: 36px 0 20px 0;
+      padding: 44px 0 28px 0;
       text-align: center;
       border-bottom-left-radius: 45px;
       border-bottom-right-radius: 45px;
       box-shadow: 0 4px 12px #f8bbd0a0;
+      margin-bottom: 24px;
     }
     .school-name {
-      font-size: 2.1em;
+      font-size: 2.2em;
       font-weight: bold;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
       margin: 0 0 8px 0;
       color: #fff7f0;
-      text-shadow: 1px 2px 5px #f4978e80;
-      line-height: 1.2;
+      text-shadow: 1px 2px 6px #f4978e99, 0 2px 10px #f4978e66;
+      line-height: 1.15;
     }
-    h1 {
-      font-size: 1.15em;
-      font-weight: 400;
-      margin: 0 0 12px 0;
-      color: #fff;
+    .school-welcome {
+      font-size: 1.1em;
+      color: #fffbe8;
+      margin: 0 0 6px 0;
       letter-spacing: 1px;
     }
     main {
       max-width: 420px;
-      margin: 30px auto 0 auto;
+      margin: 0 auto 28px auto;
       padding: 20px 12px 28px 12px;
       background: #fff7f0;
       border-radius: 22px;
       box-shadow: 0 2px 14px #f8bbd060;
     }
     h2 {
-      font-size: 1.2em;
+      font-size: 1.15em;
       color: #f4978e;
       text-align: center;
       margin-bottom: 16px;
@@ -545,7 +56,7 @@
       width: 100%;
       margin: 10px 0;
       padding: 15px;
-      font-size: 1.1em;
+      font-size: 1.08em;
       border-radius: 10px;
       border: none;
       background: #f9c5b5;
@@ -561,7 +72,7 @@
     }
     input[type="text"], input[type="password"], textarea {
       width: 100%;
-      font-size: 1.1em;
+      font-size: 1.08em;
       margin: 8px 0 16px 0;
       padding: 12px;
       border-radius: 7px;
@@ -586,7 +97,7 @@
       box-shadow: 0 1px 5px #f8bbd060;
     }
     .hidden { display: none; }
-    .msg { color: #a2c98a; margin-top: 10px; font-weight: 500;}
+    .msg { color: #65b87a; margin-top: 10px; font-weight: 500;}
     .err { color: #e76f51; margin-top: 10px; font-weight: 500;}
     .menu { margin: 0 0 24px 0; }
     .section {
@@ -630,7 +141,7 @@
 <body>
   <header>
     <div class="school-name">성주여자고등학교</div>
-    <h1>Welcome!</h1>
+    <div class="school-welcome">Sungju Girls' High School</div>
   </header>
   <main>
     <!-- Login Forms -->
